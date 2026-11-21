@@ -2,6 +2,8 @@ FROM node@sha256:626f797909b3c888a7633ddbff03d9aa3be8424a7ffaf48feb4ac4a138e56e5
 
 ARG ENV=dev
 
+RUN echo "this is a test PR"
+
 ENV NODE_ENV=${ENV}
 ENV PORT=8080
 
