@@ -1,0 +1,65 @@
+name: CI
+
+on:
+    pull_request:
+        branches: [main]
+        paths:
+            - "src/**"
+            - ".github/workflows/**"
+            - ".dockerignore"
+            - "Dockerfile"
+            - "package.json"
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+
+jobs:
+    scan-fs:
+        name: Scan filesystem
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@v7.0.1
+
+            - name: Run Trivy
+              uses: aquasecurity/trivy-action@v0.36.0
+              with:
+                  format: table
+                  scan-type: fs
+                  exit-code: "1"
+                  ignore-unfixed: true
+                  vuln-type: os,library
+                  cache: true
+                  severity: CRITICAL,HIGH
+
+    scan-image:
+        name: Scan image
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@v7.0.1
+
+            - name: Build image for scanning
+              uses: docker/build-push-action@v7.4.0
+              with:
+                  context: .
+                  file: Dockerfile
+                  load: true
+                  push: false
+                  tags: my-app:scan
+
+            - name: Run Trivy
+              uses: aquasecurity/trivy-action@v0.36.0
+              with:
+                  format: table
+                  image-ref: my-app:scan
+                  exit-code: "1"
+                  scan-type: image
+                  ignore-unfixed: true
+                  cache: true
+                  vuln-type: os,library
+                  severity: CRITICAL,HIGH
