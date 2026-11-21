@@ -40,4 +40,6 @@ jobs:
                   context: .
                   file: Dockerfile
                   push: true
-                  tags: ghcr.io/alialjaffer/my-app:${{ github.sha }}
+                  tags: |
+                      ghcr.io/alialjaffer/my-app:${{ github.sha }}
+                      ghcr.io/alialjaffer/my-app:latest
