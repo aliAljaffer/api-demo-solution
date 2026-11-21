@@ -43,6 +43,14 @@ curl -X POST http://localhost:8080/notifications \
 curl "http://localhost:8080/notifications?user_id=1"
 ```
 
+## Makefile (Docker)
+
+Phony: `up down status logs smoke clear k8s k8s-down` 
+
+All commands re-use the script in `scripts/ops.sh`
+
+`k8s` and `k8s-down` use KinD (Kubernetes in Docker) cluster to run the `k8s/*.yaml` files
+
 ## Environment variables
 
 | Variable | Description | Default |
